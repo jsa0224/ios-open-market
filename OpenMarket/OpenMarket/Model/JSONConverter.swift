@@ -7,7 +7,7 @@
 
 import Foundation
 
-class JSONConverter {
+final class JSONConverter {
     static let shared = JSONConverter()
     
     func decodeData<T: Codable>(data: Data) -> T? {

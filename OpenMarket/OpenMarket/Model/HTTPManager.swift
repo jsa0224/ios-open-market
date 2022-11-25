@@ -13,7 +13,7 @@ enum NetworkError: Error {
     case serverError
 }
 
-class HTTPManager {
+final class HTTPManager {
     static let shared = HTTPManager()
     
     func requestGet(url: String, completion: @escaping (Data) -> ()) {
