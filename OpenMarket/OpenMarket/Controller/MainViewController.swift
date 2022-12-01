@@ -53,6 +53,13 @@ final class MainViewController: UIViewController {
         configureHierarchy()
         configureDataSource()
         getItemList()
+        
+        let som = Param(name: "아이브 장원영", welcomeDescription: "하모가 올려달래요 ㅎㅎ", price: 100000000000, currency: "KRW", discountedPrice: 0, stock: 0, secret: "jbb2dy6r65tkgn3q")
+        let item = JSONConverter.shared.encodeJson(param: som)
+        
+        HTTPManager.shared.requestPOST(url: "https://openmarket.yagom-academy.kr/api/products", encodingData: item!) { data in
+            print("완료!")
+        }
     }
     
     private func configureNaviBarItem() {

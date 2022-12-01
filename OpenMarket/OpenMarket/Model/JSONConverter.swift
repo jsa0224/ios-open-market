@@ -26,4 +26,14 @@ final class JSONConverter {
             }
         }
     }
+    
+    func encodeJson<T: Codable>(param: T) -> Data? {
+        // JSON 인코더 : T타입의 객체를 JSON으로 변환
+        do {
+            let result = try JSONEncoder().encode(param)
+            return result
+        } catch {
+            return nil
+        }
+    }
 }

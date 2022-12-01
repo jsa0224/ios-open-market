@@ -20,6 +20,7 @@ enum OpenMarketURL {
     
     case itemPageComponent(pageNo: Int, itemPerPage: Int)
     case productComponent(productID: Int)
+    case addingProductComponent
     
     var url: String {
         switch self {
@@ -27,6 +28,8 @@ enum OpenMarketURL {
             return OpenMarketURL.base + "/api/products?page_no=\(pageNo)&items_per_page=\(itemPerPage)"
         case .productComponent(let productID):
             return OpenMarketURL.base + "/api/products/\(productID)"
+        case .addingProductComponent:
+            return OpenMarketURL.base + "/api/products"
         }
     }
 }
