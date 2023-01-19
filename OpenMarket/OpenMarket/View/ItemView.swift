@@ -267,11 +267,11 @@ final class ItemView: UIView {
         priceForSaleTextField.text = priceForSale
         descTextView.text = data.description
         descTextView.textColor = .black
-        
-        NetworkManager.publicNetworkManager.getImageData(url: data.thumbnail) { image in
-            DispatchQueue.main.async {
-                self.productImage.image = image
-            }
+
+        Task {
+            guard let image = try await NetworkManager.publicNetworkManager.getImageData(url: data.thumbnail) else { return }
+
+            self.productImage.image = image
         }
     }
 }

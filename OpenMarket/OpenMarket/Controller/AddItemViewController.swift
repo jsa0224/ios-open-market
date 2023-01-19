@@ -52,11 +52,11 @@ final class AddItemViewController: ItemViewController {
         guard let encodingData = JSONConverter.shared.encodeJson(param: addItemView.transferData()) else {
             return
         }
-        
-        HTTPManager.shared.requestPost(url: OpenMarketURL.postProductComponent.url,
-                                       encodingData: encodingData,
-                                       images: productImages) { data in
-            self.showAlertController(title: OpenMarketAlert.postCompletion, message: OpenMarketAlert.blank)
+
+        Task {
+            try await HTTPManager.shared.requestPost(url: OpenMarketURL.postProductComponent.url,
+                                                                encodingData: encodingData,
+                                                                images: productImages)
         }
     }
 }

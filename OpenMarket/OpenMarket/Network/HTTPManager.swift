@@ -16,46 +16,23 @@ enum NetworkError: Error {
 class HTTPManager {
     static let shared = HTTPManager()
     
-    func requestToServer(with urlRequest: URLRequest, completion: @escaping (Result<Data, NetworkError>) -> Void) {
-        URLSession.shared.dataTask(with: urlRequest) { data, urlResponse, error in
-            guard let data = data else {
-                completion(.failure(.clientError))
-                return
-            }
-            
-            guard let response = urlResponse as? HTTPURLResponse, (200..<300).contains(response.statusCode) else {
-                if let response = urlResponse as? HTTPURLResponse {
-                    print(response.statusCode)
-                }
-                return
-            }
-            
-            guard error == nil else {
-                completion(.failure(.serverError))
-                return
-            }
-            
-            completion(.success(data))
-        }.resume()
+    func requestToServer(with url: URL) async throws -> Data {
+        let data = try await URLSession.shared.data(from: url)
+
+        return data.0
     }
     
-    func requestGet(url: String, completion: @escaping (Result<Data, NetworkError>) -> Void) {
-        guard let validURL = URL(string: url) else {
-            completion(.failure(.clientError))
-            return
-        }
+    func requestGet(url: String) async throws -> Data? {
+        guard let validURL = URL(string: url) else { return nil }
         
         var urlRequest = URLRequest(url: validURL)
         urlRequest.httpMethod = HTTPMethod.get
-        
-        requestToServer(with: urlRequest, completion: completion)
+
+        return try await requestToServer(with: validURL)
     }
     
-    func requestPost(url: String, encodingData: Data, images: [UIImage], completion: @escaping (Result<Data, NetworkError>) -> Void) {
-        guard let validURL = URL(string: url) else {
-            completion(.failure(.clientError))
-            return
-        }
+    func requestPost(url: String, encodingData: Data, images: [UIImage]) async throws -> Data? {
+        guard let validURL = URL(string: url) else { return nil }
         
         var urlRequest = URLRequest(url: validURL)
         urlRequest.httpMethod = HTTPMethod.post
@@ -66,7 +43,7 @@ class HTTPManager {
         
         urlRequest.httpBody = MultipartFormDataRequest.shared.httpBody as Data
         
-        requestToServer(with: urlRequest, completion: completion)
+        return try await requestToServer(with: validURL)
     }
     
     func requestPatch(url: String, encodingData: Data, completion: @escaping (Result<Data, NetworkError>) -> Void) {
@@ -81,7 +58,7 @@ class HTTPManager {
         urlRequest.setValue("application/json", forHTTPHeaderField:"Content-Type")
         urlRequest.httpBody = encodingData
         
-        requestToServer(with: urlRequest, completion: completion)
+//        requestToServer(with: urlRequest, completion: completion)
     }
     
     func requestDelete(url: String, encodingData: Data, completion: @escaping (Result<Data, NetworkError>) -> Void) {
@@ -96,6 +73,6 @@ class HTTPManager {
         urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.httpBody = encodingData
         
-        requestToServer(with: urlRequest, completion: completion)
+//        requestToServer(with: urlRequest, completion: completion)
     }
 }

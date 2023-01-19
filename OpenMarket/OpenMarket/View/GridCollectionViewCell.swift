@@ -122,15 +122,13 @@ final class GridCollectionViewCell: UICollectionViewCell {
     }
     
     private func configureItemImage(item: Item) {
-        DispatchQueue.global().async {
-            NetworkManager.publicNetworkManager.getImageData(url: item.thumbnail) { image in
-                DispatchQueue.main.async { [weak self] in
-                    if item == self?.product {
-                        self?.productImage.image = image
-                        self?.loadingView.stopAnimating()
-                        self?.loadingView.isHidden = true
-                    }
-                }
+        Task {
+            guard let image = try await NetworkManager.publicNetworkManager.getImageData(url: item.thumbnail) else { return }
+
+            if item == product {
+                productImage.image = image
+                loadingView.stopAnimating()
+                loadingView.isHidden = true
             }
         }
     }

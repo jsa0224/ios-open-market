@@ -21,17 +21,12 @@ final class EditItemViewController: ItemViewController {
     }
     
     func getItemList(id: Int) {
-        let url = OpenMarketURL.productComponent(productID: id).url
-        
-        NetworkManager.publicNetworkManager.getJSONData(url: url, type: Item.self) { result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let data):
-                    self.editItemView.configureItemLabel(data: data)
-                case .failure(_):
-                    self.showAlertController(title: OpenMarketAlert.networkError, message: OpenMarketAlert.tryAgain)
-                }
-            }
+        Task {
+            let url = OpenMarketURL.productComponent(productID: id).url
+
+            guard let data = try? await NetworkManager.publicNetworkManager.getJSONData(url: url, type: Item.self) else { return }
+
+            self.editItemView.configureItemLabel(data: data)
         }
     }
 }
